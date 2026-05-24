@@ -1,0 +1,1 @@
+print("SNIPER FOREX AI BOT STARTED")
