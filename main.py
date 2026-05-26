@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-CHAT_ID = "TON_CHAT_ID"
+CHAT_ID = "7507876088"
 
 message = "🚀 SNIPER FOREX AI BOT CONNECTED"
 
