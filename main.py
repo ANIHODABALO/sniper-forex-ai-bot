@@ -1,4 +1,4 @@
-Flask flask import Flask
+from flask import Flask
 import requests
 import os
 
