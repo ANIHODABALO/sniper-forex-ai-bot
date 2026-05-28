@@ -3,6 +3,7 @@ import requests
 import os
 import yfinance as yf
 from ta.momentum import RSIIndicator
+from ta.trend import EMAIndicator, ADXIndicator
 
 app = Flask(__name__)
 
@@ -28,40 +29,100 @@ def home():
     data = btc.history(period="2d", interval="5m")
 
     close_prices = data["Close"]
+    high_prices = data["High"]
+    low_prices = data["Low"]
 
+    # RSI
     rsi = RSIIndicator(close_prices, window=14)
-
     current_rsi = rsi.rsi().iloc[-1]
 
-    last_price = close_prices.iloc[-1]
+    # EMA
+    ema20 = EMAIndicator(close_prices, window=20)
+    ema50 = EMAIndicator(close_prices, window=50)
+    ema200 = EMAIndicator(close_prices, window=200)
 
-    market_mode = "NEUTRE"
+    current_ema20 = ema20.ema_indicator().iloc[-1]
+    current_ema50 = ema50.ema_indicator().iloc[-1]
+    current_ema200 = ema200.ema_indicator().iloc[-1]
 
-    if 40 < current_rsi < 60:
-        market_mode = "📈 MODE TENDANCE / PULLBACK"
+    # ADX
+    adx = ADXIndicator(
+        high=high_prices,
+        low=low_prices,
+        close=close_prices,
+        window=14
+    )
 
-    elif current_rsi < 25:
-        market_mode = "🔥 MODE EXTRÊME ACHAT"
+    current_adx = adx.adx().iloc[-1]
 
-    elif current_rsi > 75:
-        market_mode = "🔥 MODE EXTRÊME VENTE"
+    current_price = close_prices.iloc[-1]
+
+    market_mode = "⚪ NEUTRE"
+
+    # BUY tendance
+    if (
+        current_ema20 > current_ema50 > current_ema200
+        and current_price >= current_ema50 * 0.995
+        and 40 < current_rsi < 60
+        and current_adx > 25
+    ):
+
+        market_mode = "📈 BUY TENDANCE"
+
+    # SELL tendance
+    elif (
+        current_ema20 < current_ema50 < current_ema200
+        and current_price <= current_ema50 * 1.005
+        and 40 < current_rsi < 60
+        and current_adx > 25
+    ):
+
+        market_mode = "📉 SELL TENDANCE"
+
+    # BUY extrême
+    elif (
+        current_rsi < 25
+        and current_adx > 25
+    ):
+
+        market_mode = "🔥 BUY EXTRÊME"
+
+    # SELL extrême
+    elif (
+        current_rsi > 75
+        and current_adx > 25
+    ):
+
+        market_mode = "🔥 SELL EXTRÊME"
 
     message = f"""
 🚀 SNIPER FOREX AI BOT
 
 📊 BTCUSD Prix :
-{last_price:.2f}
+{current_price:.2f}
 
-📈 RSI actuel :
+📈 RSI :
 {current_rsi:.2f}
 
-🧠 Analyse du marché :
+📉 ADX :
+{current_adx:.2f}
+
+📊 EMA20 :
+{current_ema20:.2f}
+
+📊 EMA50 :
+{current_ema50:.2f}
+
+📊 EMA200 :
+{current_ema200:.2f}
+
+🧠 Analyse :
 {market_mode}
 """
 
     send_telegram_message(message)
 
-    return "RSI LOGIC WORKING"
+    return "EMA RSI ADX WORKING"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
