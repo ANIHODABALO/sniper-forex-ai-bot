@@ -59,8 +59,7 @@ def analyze_market():
             ema200 = EMAIndicator(close, window=200).ema_indicator()
 
             rsi = RSIIndicator(close, window=14).rsi()
-
-            adx = ADXIndicator(
+port         adx = ADXIndicator(
                 high=high,
                 low=low,
                 close=close,
