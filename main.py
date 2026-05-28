@@ -33,6 +33,8 @@ def home():
     low_prices = data["Low"]
     open_prices = data["Open"]
 
+    current_price = close_prices.iloc[-1]
+
     # RSI
     rsi = RSIIndicator(close_prices, window=14)
     current_rsi = rsi.rsi().iloc[-1]
@@ -56,24 +58,18 @@ def home():
 
     current_adx = adx.adx().iloc[-1]
 
-    current_price = close_prices.iloc[-1]
-
-    # Bougie actuelle
+    # Analyse bougies
     current_open = open_prices.iloc[-1]
     current_close = close_prices.iloc[-1]
-    current_high = high_prices.iloc[-1]
-    current_low = low_prices.iloc[-1]
 
     candle_size = abs(current_close - current_open)
 
-    # Moyenne des 5 dernières bougies
     avg_candle_size = (
         abs(close_prices.iloc[-6:-1] - open_prices.iloc[-6:-1])
     ).mean()
 
     market_behavior = "⚪ NORMAL"
 
-    # Impulsion haussière
     if (
         current_close > current_open
         and candle_size > avg_candle_size * 1.8
@@ -81,7 +77,6 @@ def home():
 
         market_behavior = "🚀 IMPULSION HAUSSIÈRE"
 
-    # Impulsion baissière
     elif (
         current_close < current_open
         and candle_size > avg_candle_size * 1.8
@@ -89,11 +84,27 @@ def home():
 
         market_behavior = "🔥 IMPULSION BAISSIÈRE"
 
-    # Ralentissement / épuisement
     elif candle_size < avg_candle_size * 0.5:
 
         market_behavior = "🕯️ RALENTISSEMENT / ÉPUISEMENT"
 
+    # Zones marché
+    resistance = high_prices.iloc[-20:].max()
+    support = low_prices.iloc[-20:].min()
+
+    zone_analysis = "⚪ AUCUNE ZONE"
+
+    # Prix proche résistance
+    if current_price >= resistance * 0.998:
+
+        zone_analysis = "📉 PROCHE RÉSISTANCE"
+
+    # Prix proche support
+    elif current_price <= support * 1.002:
+
+        zone_analysis = "📈 PROCHE SUPPORT"
+
+    # Signaux
     market_mode = "⚪ NEUTRE"
 
     # BUY tendance
@@ -102,6 +113,7 @@ def home():
         and current_price >= current_ema50 * 0.995
         and 40 < current_rsi < 60
         and current_adx > 25
+        and "HAUSSIÈRE" in market_behavior
     ):
 
         market_mode = "📈 BUY TENDANCE"
@@ -112,6 +124,7 @@ def home():
         and current_price <= current_ema50 * 1.005
         and 40 < current_rsi < 60
         and current_adx > 25
+        and "BAISSIÈRE" in market_behavior
     ):
 
         market_mode = "📉 SELL TENDANCE"
@@ -120,6 +133,7 @@ def home():
     elif (
         current_rsi < 25
         and current_adx > 25
+        and "SUPPORT" in zone_analysis
     ):
 
         market_mode = "🔥 BUY EXTRÊME"
@@ -128,6 +142,7 @@ def home():
     elif (
         current_rsi > 75
         and current_adx > 25
+        and "RÉSISTANCE" in zone_analysis
     ):
 
         market_mode = "🔥 SELL EXTRÊME"
@@ -156,13 +171,22 @@ def home():
 🧠 Analyse :
 {market_mode}
 
-🔥 Comportement marché :
+🔥 Comportement :
 {market_behavior}
+
+📍 Zone :
+{zone_analysis}
+
+📉 Résistance :
+{resistance:.2f}
+
+📈 Support :
+{support:.2f}
 """
 
     send_telegram_message(message)
 
-    return "SMART MARKET WORKING"
+    return "SMART ZONE SYSTEM WORKING"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
