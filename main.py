@@ -31,6 +31,7 @@ def home():
     close_prices = data["Close"]
     high_prices = data["High"]
     low_prices = data["Low"]
+    open_prices = data["Open"]
 
     # RSI
     rsi = RSIIndicator(close_prices, window=14)
@@ -56,6 +57,42 @@ def home():
     current_adx = adx.adx().iloc[-1]
 
     current_price = close_prices.iloc[-1]
+
+    # Bougie actuelle
+    current_open = open_prices.iloc[-1]
+    current_close = close_prices.iloc[-1]
+    current_high = high_prices.iloc[-1]
+    current_low = low_prices.iloc[-1]
+
+    candle_size = abs(current_close - current_open)
+
+    # Moyenne des 5 dernières bougies
+    avg_candle_size = (
+        abs(close_prices.iloc[-6:-1] - open_prices.iloc[-6:-1])
+    ).mean()
+
+    market_behavior = "⚪ NORMAL"
+
+    # Impulsion haussière
+    if (
+        current_close > current_open
+        and candle_size > avg_candle_size * 1.8
+    ):
+
+        market_behavior = "🚀 IMPULSION HAUSSIÈRE"
+
+    # Impulsion baissière
+    elif (
+        current_close < current_open
+        and candle_size > avg_candle_size * 1.8
+    ):
+
+        market_behavior = "🔥 IMPULSION BAISSIÈRE"
+
+    # Ralentissement / épuisement
+    elif candle_size < avg_candle_size * 0.5:
+
+        market_behavior = "🕯️ RALENTISSEMENT / ÉPUISEMENT"
 
     market_mode = "⚪ NEUTRE"
 
@@ -118,11 +155,14 @@ def home():
 
 🧠 Analyse :
 {market_mode}
+
+🔥 Comportement marché :
+{market_behavior}
 """
 
     send_telegram_message(message)
 
-    return "EMA RSI ADX WORKING"
+    return "SMART MARKET WORKING"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
