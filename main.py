@@ -2,6 +2,7 @@ from flask import Flask
 import requests
 import os
 import yfinance as yf
+from ta.momentum import RSIIndicator
 
 app = Flask(__name__)
 
@@ -24,22 +25,31 @@ def home():
 
     btc = yf.Ticker("BTC-USD")
 
-    data = btc.history(period="1d")
+    data = btc.history(period="2d", interval="5m")
 
-    last_price = data["Close"].iloc[-1]
+    close_prices = data["Close"]
+
+    rsi = RSIIndicator(close_prices, window=14)
+
+    current_rsi = rsi.rsi().iloc[-1]
+
+    last_price = close_prices.iloc[-1]
 
     message = f"""
 🚀 SNIPER FOREX AI BOT
 
-✅ Connexion marché réussie
+✅ RSI connecté avec succès
 
-📊 BTCUSD Prix actuel :
+📊 BTCUSD Prix :
 {last_price:.2f}
+
+📈 RSI actuel :
+{current_rsi:.2f}
 """
 
     send_telegram_message(message)
 
-    return "MARKET DATA WORKING"
+    return "RSI WORKING"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
