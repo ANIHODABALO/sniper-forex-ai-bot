@@ -1,6 +1,7 @@
 from flask import Flask
 import requests
 import os
+import yfinance as yf
 
 app = Flask(__name__)
 
@@ -21,9 +22,24 @@ def send_telegram_message(message):
 @app.route("/")
 def home():
 
-    send_telegram_message("🚀 SNIPER FOREX AI BOT CONNECTED")
+    btc = yf.Ticker("BTC-USD")
 
-    return "BOT TELEGRAM WORKING"
+    data = btc.history(period="1d")
+
+    last_price = data["Close"].iloc[-1]
+
+    message = f"""
+🚀 SNIPER FOREX AI BOT
+
+✅ Connexion marché réussie
+
+📊 BTCUSD Prix actuel :
+{last_price:.2f}
+"""
+
+    send_telegram_message(message)
+
+    return "MARKET DATA WORKING"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
