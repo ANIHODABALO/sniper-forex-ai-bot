@@ -35,21 +35,33 @@ def home():
 
     last_price = close_prices.iloc[-1]
 
+    market_mode = "NEUTRE"
+
+    if 40 < current_rsi < 60:
+        market_mode = "📈 MODE TENDANCE / PULLBACK"
+
+    elif current_rsi < 25:
+        market_mode = "🔥 MODE EXTRÊME ACHAT"
+
+    elif current_rsi > 75:
+        market_mode = "🔥 MODE EXTRÊME VENTE"
+
     message = f"""
 🚀 SNIPER FOREX AI BOT
-
-✅ RSI connecté avec succès
 
 📊 BTCUSD Prix :
 {last_price:.2f}
 
 📈 RSI actuel :
 {current_rsi:.2f}
+
+🧠 Analyse du marché :
+{market_mode}
 """
 
     send_telegram_message(message)
 
-    return "RSI WORKING"
+    return "RSI LOGIC WORKING"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
