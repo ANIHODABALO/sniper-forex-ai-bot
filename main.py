@@ -21,167 +21,174 @@ def send_telegram_message(message):
 
     requests.post(url, data=data)
 
+# Liste actifs
+assets = {
+    "BTCUSD": "BTC-USD",
+    "XAUUSD": "GC=F",
+    "EURUSD": "EURUSD=X",
+    "GBPUSD": "GBPUSD=X",
+    "USDJPY": "JPY=X",
+    "USTEC": "^NDX",
+    "USOIL": "CL=F"
+}
+
 @app.route("/")
 def home():
 
-    btc = yf.Ticker("BTC-USD")
+    final_message = "🚀 SNIPER FOREX AI BOT\n\n"
 
-    data = btc.history(period="2d", interval="5m")
+    for asset_name, symbol in assets.items():
 
-    close_prices = data["Close"]
-    high_prices = data["High"]
-    low_prices = data["Low"]
-    open_prices = data["Open"]
+        try:
 
-    current_price = close_prices.iloc[-1]
+            market = yf.Ticker(symbol)
 
-    # RSI
-    rsi = RSIIndicator(close_prices, window=14)
-    current_rsi = rsi.rsi().iloc[-1]
+            data = market.history(period="2d", interval="5m")
 
-    # EMA
-    ema20 = EMAIndicator(close_prices, window=20)
-    ema50 = EMAIndicator(close_prices, window=50)
-    ema200 = EMAIndicator(close_prices, window=200)
+            close_prices = data["Close"]
+            high_prices = data["High"]
+            low_prices = data["Low"]
+            open_prices = data["Open"]
 
-    current_ema20 = ema20.ema_indicator().iloc[-1]
-    current_ema50 = ema50.ema_indicator().iloc[-1]
-    current_ema200 = ema200.ema_indicator().iloc[-1]
+            current_price = close_prices.iloc[-1]
 
-    # ADX
-    adx = ADXIndicator(
-        high=high_prices,
-        low=low_prices,
-        close=close_prices,
-        window=14
-    )
+            # RSI
+            rsi = RSIIndicator(close_prices, window=14)
+            current_rsi = rsi.rsi().iloc[-1]
 
-    current_adx = adx.adx().iloc[-1]
+            # EMA
+            ema20 = EMAIndicator(close_prices, window=20)
+            ema50 = EMAIndicator(close_prices, window=50)
+            ema200 = EMAIndicator(close_prices, window=200)
 
-    # Analyse bougie
-    current_open = open_prices.iloc[-1]
-    current_close = close_prices.iloc[-1]
+            current_ema20 = ema20.ema_indicator().iloc[-1]
+            current_ema50 = ema50.ema_indicator().iloc[-1]
+            current_ema200 = ema200.ema_indicator().iloc[-1]
 
-    candle_size = abs(current_close - current_open)
+            # ADX
+            adx = ADXIndicator(
+                high=high_prices,
+                low=low_prices,
+                close=close_prices,
+                window=14
+            )
 
-    avg_candle_size = (
-        abs(close_prices.iloc[-6:-1] - open_prices.iloc[-6:-1])
-    ).mean()
+            current_adx = adx.adx().iloc[-1]
 
-    market_behavior = "⚪ NORMAL"
+            # Bougie actuelle
+            current_open = open_prices.iloc[-1]
+            current_close = close_prices.iloc[-1]
 
-    # Impulsion haussière
-    if (
-        current_close > current_open
-        and candle_size > avg_candle_size * 1.8
-    ):
+            candle_size = abs(current_close - current_open)
 
-        market_behavior = "🚀 IMPULSION HAUSSIÈRE"
+            avg_candle_size = (
+                abs(close_prices.iloc[-6:-1] - open_prices.iloc[-6:-1])
+            ).mean()
 
-    # Impulsion baissière
-    elif (
-        current_close < current_open
-        and candle_size > avg_candle_size * 1.8
-    ):
+            market_behavior = "⚪ NORMAL"
 
-        market_behavior = "🔥 IMPULSION BAISSIÈRE"
+            # Impulsion haussière
+            if (
+                current_close > current_open
+                and candle_size > avg_candle_size * 1.8
+            ):
 
-    # Ralentissement
-    elif candle_size < avg_candle_size * 0.5:
+                market_behavior = "🚀 IMPULSION HAUSSIÈRE"
 
-        market_behavior = "🕯️ RALENTISSEMENT / ÉPUISEMENT"
+            # Impulsion baissière
+            elif (
+                current_close < current_open
+                and candle_size > avg_candle_size * 1.8
+            ):
 
-    # Zones
-    resistance = high_prices.iloc[-20:].max()
-    support = low_prices.iloc[-20:].min()
+                market_behavior = "🔥 IMPULSION BAISSIÈRE"
 
-    zone_analysis = "⚪ AUCUNE ZONE"
+            # Ralentissement
+            elif candle_size < avg_candle_size * 0.5:
 
-    if current_price >= resistance * 0.998:
+                market_behavior = "🕯️ RALENTISSEMENT"
 
-        zone_analysis = "📉 PROCHE RÉSISTANCE"
+            # Zones
+            resistance = high_prices.iloc[-20:].max()
+            support = low_prices.iloc[-20:].min()
 
-    elif current_price <= support * 1.002:
+            zone_analysis = "⚪"
 
-        zone_analysis = "📈 PROCHE SUPPORT"
+            if current_price >= resistance * 0.998:
 
-    # Cassures
-    bullish_breakout = (
-        current_price > resistance
-        and "HAUSSIÈRE" in market_behavior
-    )
+                zone_analysis = "📉 RÉSISTANCE"
 
-    bearish_breakout = (
-        current_price < support
-        and "BAISSIÈRE" in market_behavior
-    )
+            elif current_price <= support * 1.002:
 
-    # Signaux
-    market_mode = "⚪ NEUTRE"
+                zone_analysis = "📈 SUPPORT"
 
-    # BUY tendance + cassure
-    if (
-        current_ema20 > current_ema50 > current_ema200
-        and current_price >= current_ema50 * 0.995
-        and 40 < current_rsi < 60
-        and current_adx > 25
-        and bullish_breakout
-    ):
+            # Cassures
+            bullish_breakout = (
+                current_price > resistance
+                and "HAUSSIÈRE" in market_behavior
+            )
 
-        market_mode = "🚀 BUY TENDANCE + CASSURE"
+            bearish_breakout = (
+                current_price < support
+                and "BAISSIÈRE" in market_behavior
+            )
 
-    # SELL tendance + cassure
-    elif (
-        current_ema20 < current_ema50 < current_ema200
-        and current_price <= current_ema50 * 1.005
-        and 40 < current_rsi < 60
-        and current_adx > 25
-        and bearish_breakout
-    ):
+            # Signal
+            signal = "⚪ NEUTRE"
 
-        market_mode = "🔥 SELL TENDANCE + CASSURE"
+            # BUY tendance
+            if (
+                current_ema20 > current_ema50 > current_ema200
+                and current_price >= current_ema50 * 0.995
+                and 40 < current_rsi < 60
+                and current_adx > 25
+                and bullish_breakout
+            ):
 
-    # BUY extrême
-    elif (
-        current_rsi < 25
-        and current_adx > 25
-        and "SUPPORT" in zone_analysis
-    ):
+                signal = "🚀 BUY TENDANCE"
 
-        market_mode = "🔥 BUY EXTRÊME"
+            # SELL tendance
+            elif (
+                current_ema20 < current_ema50 < current_ema200
+                and current_price <= current_ema50 * 1.005
+                and 40 < current_rsi < 60
+                and current_adx > 25
+                and bearish_breakout
+            ):
 
-    # SELL extrême
-    elif (
-        current_rsi > 75
-        and current_adx > 25
-        and "RÉSISTANCE" in zone_analysis
-    ):
+                signal = "🔥 SELL TENDANCE"
 
-        market_mode = "🔥 SELL EXTRÊME"
+            # BUY extrême
+            elif (
+                current_rsi < 25
+                and current_adx > 25
+                and "SUPPORT" in zone_analysis
+            ):
 
-    message = f"""
-🚀 SNIPER FOREX AI BOT
+                signal = "🔥 BUY EXTRÊME"
 
-📊 BTCUSD Prix :
-{current_price:.2f}
+            # SELL extrême
+            elif (
+                current_rsi > 75
+                and current_adx > 25
+                and "RÉSISTANCE" in zone_analysis
+            ):
 
-📈 RSI :
-{current_rsi:.2f}
+                signal = "🔥 SELL EXTRÊME"
 
-📉 ADX :
-{current_adx:.2f}
+            # Affichage seulement signaux intéressants
+            if signal != "⚪ NEUTRE":
 
-📊 EMA20 :
-{current_ema20:.2f}
+                final_message += f"""
+📊 {asset_name}
 
-📊 EMA50 :
-{current_ema50:.2f}
+💰 Prix : {current_price:.2f}
 
-📊 EMA200 :
-{current_ema200:.2f}
+📈 RSI : {current_rsi:.2f}
+📉 ADX : {current_adx:.2f}
 
-🧠 Analyse :
-{market_mode}
+🧠 Signal :
+{signal}
 
 🔥 Comportement :
 {market_behavior}
@@ -189,16 +196,20 @@ def home():
 📍 Zone :
 {zone_analysis}
 
-📉 Résistance :
-{resistance:.2f}
-
-📈 Support :
-{support:.2f}
+------------------------
 """
 
-    send_telegram_message(message)
+        except:
 
-    return "SNIPER AI BOT ACTIVE"
+            continue
+
+    if final_message == "🚀 SNIPER FOREX AI BOT\n\n":
+
+        final_message += "⚪ Aucun setup propre actuellement."
+
+    send_telegram_message(final_message)
+
+    return "MULTI ASSET SCANNER ACTIVE"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
