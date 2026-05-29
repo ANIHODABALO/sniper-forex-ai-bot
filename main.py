@@ -1,4 +1,4 @@
-from flask import Flask
+EMAIndicator flask import Flask
 import requests
 import os
 import yfinance as yf
