@@ -4,7 +4,8 @@ import os
 import yfinance as yf
 from ta.momentum import RSIIndicator
 from ta.trend import EMAIndicator, ADXIndicator
-
+import threading
+import time
 app = Flask(__name__)
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -257,7 +258,21 @@ def home():
         )
 
     return "ANTI SPAM ACTIVE"
+def auto_scan():
 
+    while True:
+
+        try:
+
+            home()
+
+        except Exception as e:
+
+            print(e)
+
+        time.sleep(300)
+
+threading.Thread(target=auto_scan).start()
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
