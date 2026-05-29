@@ -58,7 +58,7 @@ def home():
 
     current_adx = adx.adx().iloc[-1]
 
-    # Analyse bougies
+    # Analyse bougie
     current_open = open_prices.iloc[-1]
     current_close = close_prices.iloc[-1]
 
@@ -70,6 +70,7 @@ def home():
 
     market_behavior = "⚪ NORMAL"
 
+    # Impulsion haussière
     if (
         current_close > current_open
         and candle_size > avg_candle_size * 1.8
@@ -77,6 +78,7 @@ def home():
 
         market_behavior = "🚀 IMPULSION HAUSSIÈRE"
 
+    # Impulsion baissière
     elif (
         current_close < current_open
         and candle_size > avg_candle_size * 1.8
@@ -84,50 +86,60 @@ def home():
 
         market_behavior = "🔥 IMPULSION BAISSIÈRE"
 
+    # Ralentissement
     elif candle_size < avg_candle_size * 0.5:
 
         market_behavior = "🕯️ RALENTISSEMENT / ÉPUISEMENT"
 
-    # Zones marché
+    # Zones
     resistance = high_prices.iloc[-20:].max()
     support = low_prices.iloc[-20:].min()
 
     zone_analysis = "⚪ AUCUNE ZONE"
 
-    # Prix proche résistance
     if current_price >= resistance * 0.998:
 
         zone_analysis = "📉 PROCHE RÉSISTANCE"
 
-    # Prix proche support
     elif current_price <= support * 1.002:
 
         zone_analysis = "📈 PROCHE SUPPORT"
 
+    # Cassures
+    bullish_breakout = (
+        current_price > resistance
+        and "HAUSSIÈRE" in market_behavior
+    )
+
+    bearish_breakout = (
+        current_price < support
+        and "BAISSIÈRE" in market_behavior
+    )
+
     # Signaux
     market_mode = "⚪ NEUTRE"
 
-    # BUY tendance
+    # BUY tendance + cassure
     if (
         current_ema20 > current_ema50 > current_ema200
         and current_price >= current_ema50 * 0.995
         and 40 < current_rsi < 60
         and current_adx > 25
-        and "HAUSSIÈRE" in market_behavior
+        and bullish_breakout
     ):
 
-        market_mode = "📈 BUY TENDANCE"
+        market_mode = "🚀 BUY TENDANCE + CASSURE"
 
-    # SELL tendance
+    # SELL tendance + cassure
     elif (
         current_ema20 < current_ema50 < current_ema200
         and current_price <= current_ema50 * 1.005
         and 40 < current_rsi < 60
         and current_adx > 25
-        and "BAISSIÈRE" in market_behavior
+        and bearish_breakout
     ):
 
-        market_mode = "📉 SELL TENDANCE"
+        market_mode = "🔥 SELL TENDANCE + CASSURE"
 
     # BUY extrême
     elif (
@@ -186,7 +198,7 @@ def home():
 
     send_telegram_message(message)
 
-    return "SMART ZONE SYSTEM WORKING"
+    return "SNIPER AI BOT ACTIVE"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
