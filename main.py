@@ -87,7 +87,6 @@ def home():
 
             market_behavior = "⚪ NORMAL"
 
-            # Impulsion haussière
             if (
                 current_close > current_open
                 and candle_size > avg_candle_size * 1.8
@@ -95,7 +94,6 @@ def home():
 
                 market_behavior = "🚀 IMPULSION HAUSSIÈRE"
 
-            # Impulsion baissière
             elif (
                 current_close < current_open
                 and candle_size > avg_candle_size * 1.8
@@ -103,7 +101,6 @@ def home():
 
                 market_behavior = "🔥 IMPULSION BAISSIÈRE"
 
-            # Ralentissement
             elif candle_size < avg_candle_size * 0.5:
 
                 market_behavior = "🕯️ RALENTISSEMENT"
@@ -132,6 +129,45 @@ def home():
                 current_price < support
                 and "BAISSIÈRE" in market_behavior
             )
+
+            # SCORE
+            confidence = 0
+
+            # RSI
+            if (
+                current_rsi < 25
+                or current_rsi > 75
+                or 40 < current_rsi < 60
+            ):
+
+                confidence += 20
+
+            # ADX
+            if current_adx > 25:
+
+                confidence += 20
+
+            # Zones
+            if "SUPPORT" in zone_analysis or "RÉSISTANCE" in zone_analysis:
+
+                confidence += 20
+
+            # EMA
+            if (
+                current_ema20 > current_ema50
+                or current_ema20 < current_ema50
+            ):
+
+                confidence += 20
+
+            # Impulsion / cassure
+            if (
+                "IMPULSION" in market_behavior
+                or bullish_breakout
+                or bearish_breakout
+            ):
+
+                confidence += 20
 
             # Signal
             signal = "⚪ NEUTRE"
@@ -176,7 +212,7 @@ def home():
 
                 signal = "🔥 SELL EXTRÊME"
 
-            # Affichage seulement signaux intéressants
+            # Affichage
             if signal != "⚪ NEUTRE":
 
                 final_message += f"""
@@ -189,6 +225,9 @@ def home():
 
 🧠 Signal :
 {signal}
+
+🎯 Confiance :
+{confidence}%
 
 🔥 Comportement :
 {market_behavior}
@@ -209,7 +248,7 @@ def home():
 
     send_telegram_message(final_message)
 
-    return "MULTI ASSET SCANNER ACTIVE"
+    return "CONFIDENCE SCANNER ACTIVE"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
