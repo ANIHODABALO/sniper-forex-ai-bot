@@ -1,12 +1,11 @@
 from flask import Flask
 import requests
 import os
-import yfinance as RSIIndicator
+import yfinance as yf
 from ta.momentum import RSIIndicator
 from ta.trend import EMAIndicator, ADXIndicator
-import threading
-import time
 
+app = Flask(__name__)
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = "7507876088"
@@ -205,7 +204,7 @@ def home():
 
                 signal = "🔥 BUY EXTRÊME"
 
-    SELL    # SELL extrême
+            # SELL extrême
             elif (
                 current_rsi > 75
                 and current_adx > 25
@@ -258,21 +257,6 @@ def home():
         )
 
     return "ANTI SPAM ACTIVE"
-def auto_scan():
-
-    while True:
-
-        try:
-
-            home()
-
-        except Exception as e:
-
-            print(e)
-
-        time.sleep(300)
-
-threading.Thread(target=auto_scan).start()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
