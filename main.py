@@ -10,6 +10,9 @@ app = Flask(__name__)
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHAT_ID = "7507876088"
 
+# Mémoire anti-spam
+last_signals = {}
+
 def send_telegram_message(message):
 
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
@@ -35,7 +38,7 @@ assets = {
 @app.route("/")
 def home():
 
-    final_message = "🚀 SNIPER FOREX AI BOT\n\n"
+    final_message = ""
 
     for asset_name, symbol in assets.items():
 
@@ -133,7 +136,6 @@ def home():
             # SCORE
             confidence = 0
 
-            # RSI
             if (
                 current_rsi < 25
                 or current_rsi > 75
@@ -142,17 +144,17 @@ def home():
 
                 confidence += 20
 
-            # ADX
             if current_adx > 25:
 
                 confidence += 20
 
-            # Zones
-            if "SUPPORT" in zone_analysis or "RÉSISTANCE" in zone_analysis:
+            if (
+                "SUPPORT" in zone_analysis
+                or "RÉSISTANCE" in zone_analysis
+            ):
 
                 confidence += 20
 
-            # EMA
             if (
                 current_ema20 > current_ema50
                 or current_ema20 < current_ema50
@@ -160,7 +162,6 @@ def home():
 
                 confidence += 20
 
-            # Impulsion / cassure
             if (
                 "IMPULSION" in market_behavior
                 or bullish_breakout
@@ -212,8 +213,15 @@ def home():
 
                 signal = "🔥 SELL EXTRÊME"
 
-            # Affichage
-            if signal != "⚪ NEUTRE":
+            # Anti-spam
+            previous_signal = last_signals.get(asset_name)
+
+            if (
+                signal != "⚪ NEUTRE"
+                and signal != previous_signal
+            ):
+
+                last_signals[asset_name] = signal
 
                 final_message += f"""
 📊 {asset_name}
@@ -242,13 +250,13 @@ def home():
 
             continue
 
-    if final_message == "🚀 SNIPER FOREX AI BOT\n\n":
+    if final_message != "":
 
-        final_message += "⚪ Aucun setup propre actuellement."
+        send_telegram_message(
+            "🚀 SNIPER FOREX AI BOT\n\n" + final_message
+        )
 
-    send_telegram_message(final_message)
-
-    return "CONFIDENCE SCANNER ACTIVE"
+    return "ANTI SPAM ACTIVE"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
