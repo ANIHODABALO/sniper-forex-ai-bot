@@ -4,6 +4,7 @@ import os
 import yfinance as yf
 from ta.momentum import RSIIndicator
 from ta.trend import EMAIndicator, ADXIndicator
+from ta.volatility import AverageTrueRange
 import threading
 import time
 app = Flask(__name__)
@@ -79,8 +80,17 @@ def home():
 
             current_adx = adx.adx().iloc[-1]
 
-            # Bougie actuelle
-            current_open = open_prices.iloc[-1]
+# ATR
+atr = AverageTrueRange(
+    high=high_prices,
+    low=low_prices,
+    close=close_prices,
+    window=14
+)
+current_atr = atr.average_true_range().iloc[-1]
+
+# Bougie actuelle
+current_open = open_prices.iloc[-1]
             current_close = close_prices.iloc[-1]
 
             candle_size = abs(current_close - current_open)
