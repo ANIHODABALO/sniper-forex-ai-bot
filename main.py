@@ -249,6 +249,9 @@ def home():
 🧠 Signal :
 {signal}
 
+🎯 SL BUY : {buy_sl:.2f}
+🎯 SL SELL : {sell_sl:.2f}
+
 🎯 Confiance :
 {confidence}%
 
