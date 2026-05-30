@@ -99,7 +99,9 @@ def home():
             buy_tp = resistance
             sell_tp = support
             candle_size = abs(current_close - current_open)
-
+# Entrée Théorique
+buy_entry = current_ema50
+sell_entry = current_ema50
             avg_candle_size = (
                 abs(close_prices.iloc[-6:-1] - open_prices.iloc[-6:-1])
             ).mean()
