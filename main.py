@@ -89,7 +89,9 @@ def home():
             )
 
             current_atr = atr.average_true_range().iloc[-1]
-
+# SL Technique
+            buy_sl = support - (current_atr * 0.5)
+            sell_sl = resistance + (current_atr * 0.5)
             # Bougie actuelle
             current_open = open_prices.iloc[-1]
             current_close = close_prices.iloc[-1]
