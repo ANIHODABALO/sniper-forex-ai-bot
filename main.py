@@ -242,6 +242,7 @@ def home():
 
 📈 RSI : {current_rsi:.2f}
 📉 ADX : {current_adx:.2f}
+📊 ATR : {current_atr:.2f}
 
 🧠 Signal :
 {signal}
