@@ -81,16 +81,17 @@ def home():
             current_adx = adx.adx().iloc[-1]
 
 # ATR
-atr = AverageTrueRange(
-    high=high_prices,
-    low=low_prices,
-    close=close_prices,
-    window=14
-)
-current_atr = atr.average_true_range().iloc[-1]
+            atr = AverageTrueRange(
+                high=high_prices,
+                low=low_prices,
+                close=close_prices,
+                window=14
+            )
 
-# Bougie actuelle
-current_open = open_prices.iloc[-1]
+            current_atr = atr.average_true_range().iloc[-1]
+
+            # Bougie actuelle
+            current_open = open_prices.iloc[-1]
             current_close = close_prices.iloc[-1]
 
             candle_size = abs(current_close - current_open)
