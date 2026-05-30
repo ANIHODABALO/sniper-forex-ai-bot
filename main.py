@@ -1,4 +1,4 @@
-symbol flask import Flask
+from flask import Flask
 import requests
 import os
 import yfinance as yf
@@ -79,7 +79,6 @@ def home():
             )
 
             current_adx = adx.adx().iloc[-1]
-
 # ATR
 atr = AverageTrueRange(
     high=high_prices,
