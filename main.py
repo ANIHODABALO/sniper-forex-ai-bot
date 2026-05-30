@@ -95,7 +95,9 @@ def home():
             # Bougie actuelle
             current_open = open_prices.iloc[-1]
             current_close = close_prices.iloc[-1]
-
+# TP Zone Clé
+            buy_tp = resistance
+            sell_tp = support
             candle_size = abs(current_close - current_open)
 
             avg_candle_size = (
