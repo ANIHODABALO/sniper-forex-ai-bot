@@ -253,7 +253,8 @@ def home():
 📊 ATR : {current_atr:.2f}
 🎯 SL BUY : {buy_sl:.2f}
 🎯 SL SELL : {sell_sl:.2f}
-
+🎯 TP BUY : {buy_tp:.2f}
+🎯 TP SELL : {sell_tp:.2f}
 🎯 Confiance :
 {confidence}%
 
