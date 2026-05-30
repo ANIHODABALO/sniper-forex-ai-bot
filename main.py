@@ -248,7 +248,7 @@ def home():
 
 🧠 Signal :
 {signal}
-
+📊 ATR : {current_atr:.2f}
 🎯 SL BUY : {buy_sl:.2f}
 🎯 SL SELL : {sell_sl:.2f}
 
