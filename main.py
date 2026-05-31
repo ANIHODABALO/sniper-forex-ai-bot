@@ -14,7 +14,7 @@ CHAT_ID = "7507876088"
 
 # Mémoire anti-spam
 last_signals = {}
-
+last_heartbeat = 0
 def send_telegram_message(message):
 
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
@@ -32,8 +32,7 @@ assets = {
     "XAUUSD": "GC=F",
     "EURUSD": "EURUSD=X",
     "GBPUSD": "GBPUSD=X",
-    "USDJPY": "JPY=X",
-    "USTEC": "^NDX",
+    "USDJPY": "JPexcept    "USTEC": "^NDX",
     "USOIL": "CL=F"
 }
 
@@ -280,11 +279,21 @@ def home():
     return "ANTI SPAM ACTIVE"
 def auto_scan():
 
+    global last_heartbeat
+
     while True:
 
         try:
 
             home()
+
+            if time.time() - last_heartbeat >= 21600:
+
+                send_telegram_message(
+                    "🤖 SNIPER FOREX AI BOT\n\n✅ Scanner actif\n✅ Render actif\n⏰ Heartbeat 6h"
+                )
+
+                last_heartbeat = time.time()
 
         except Exception as e:
 
