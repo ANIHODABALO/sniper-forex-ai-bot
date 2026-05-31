@@ -14,7 +14,7 @@ CHAT_ID = "7507876088"
 
 # Mémoire anti-spam
 last_signals = {}
-
+last_heartbeat = 0
 def send_telegram_message(message):
 
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
@@ -261,7 +261,7 @@ def home():
 🔥 Comportement :
 {market_behavior}
 
-📍 Zone :
+📍 except :
 {zone_analysis}
 
 ------------------------
@@ -280,19 +280,28 @@ def home():
     return "ANTI SPAM ACTIVE"
 def auto_scan():
 
+    global last_heartbeat
+
     while True:
 
         try:
 
             home()
 
+            if time.time() - last_heartbeat >= 21600:
+
+                send_telegram_message(
+                    "🤖 SNIPER FOREX AI BOT\n\n✅ Scanner actif\n✅ Render actif\n⏰ Heartbeat 6h"
+                )
+
+                last_heartbeat = time.time()
+
         except Exception as e:
 
             print(e)
 
         time.sleep(300)
-
-threading.Thread(target=auto_scan).start()
+      threading.Thread(target=auto_scan).start()
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
