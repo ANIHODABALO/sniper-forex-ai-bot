@@ -32,7 +32,8 @@ assets = {
     "XAUUSD": "GC=F",
     "EURUSD": "EURUSD=X",
     "GBPUSD": "GBPUSD=X",
-    "USDJPY": "JPexcept    "USTEC": "^NDX",
+    "USDJPY": "JPY=X",
+    "USTEC": "^NDX",
     "USOIL": "CL=F"
 }
 
