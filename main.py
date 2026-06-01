@@ -29,10 +29,18 @@ def send_telegram_message(message):
 # Liste actifs
 assets = {
     "BTCUSD": "BTC-USD",
+    "ETHUSD": "ETH-USD",
     "XAUUSD": "GC=F",
     "EURUSD": "EURUSD=X",
     "GBPUSD": "GBPUSD=X",
     "USDJPY": "JPY=X",
+    "AUDUSD": "AUDUSD=X",
+    "USDCAD": "CAD=X",
+    "EURJPY": "EURJPY=X",
+    "GBPJPY": "GBPJPY=X",
+    "EURGBP": "EURGBP=X",
+    "AUDJPY": "AUDJPY=X",
+    "CADJPY": "CADJPY=X",
     "USTEC": "^NDX",
     "USOIL": "CL=F"
 }
