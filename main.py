@@ -103,6 +103,8 @@ def home():
             # Bougie actuelle
             current_open = open_prices.iloc[-1]
             current_close = close_prices.iloc[-1]
+            current_high = high_prices.iloc[-1]
+current_low = low_prices.iloc[-1]
 # TP Zone Clé
             buy_tp = resistance
             sell_tp = support
