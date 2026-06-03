@@ -131,6 +131,17 @@ def home():
             long_upper_wick = (
                 upper_wick > previous_body * 2
             )
+            bullish_rejection = (
+                long_lower_wick
+                or is_doji
+                or is_exhaustion
+            )
+
+            bearish_rejection = (
+                long_upper_wick
+                or is_doji
+                or is_exhaustion
+            )
 # TP Zone Clé
             buy_tp = resistance
             sell_tp = support
