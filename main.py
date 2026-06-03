@@ -142,6 +142,25 @@ def home():
                 or is_doji
                 or is_exhaustion
             )
+            near_ema50 = (
+                abs(current_price - current_ema50)
+                <= current_atr
+            )
+
+            near_ema200 = (
+                abs(current_price - current_ema200)
+                <= current_atr
+            )
+
+            near_support = (
+                abs(current_price - support)
+                <= current_atr
+            )
+
+            near_resistance = (
+                abs(current_price - resistance)
+                <= current_atr
+            )
 # TP Zone Clé
             buy_tp = resistance
             sell_tp = support
