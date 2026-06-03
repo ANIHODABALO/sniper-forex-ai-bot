@@ -121,6 +121,16 @@ def home():
             is_exhaustion = (
                 previous_body < avg_candle_size * 0.5
             )
+            lower_wick = min(previous_open, previous_close) - previous_low
+            upper_wick = previous_high - max(previous_open, previous_close)
+
+            long_lower_wick = (
+                lower_wick > previous_body * 2
+            )
+
+            long_upper_wick = (
+                upper_wick > previous_body * 2
+            )
 # TP Zone Clé
             buy_tp = resistance
             sell_tp = support
