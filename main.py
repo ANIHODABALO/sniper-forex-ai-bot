@@ -105,6 +105,10 @@ def home():
             current_close = close_prices.iloc[-1]
             current_high = high_prices.iloc[-1]
             current_low = low_prices.iloc[-1]
+            previous_open = open_prices.iloc[-2]
+            previous_close = close_prices.iloc[-2]
+            previous_high = high_prices.iloc[-2]
+            previous_low = low_prices.iloc[-2]
 # TP Zone Clé
             buy_tp = resistance
             sell_tp = support
