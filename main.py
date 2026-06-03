@@ -114,6 +114,13 @@ def home():
             previous_low = low_prices.iloc[-2]
             previous_body = abs(previous_close - previous_open)
             previous_range = previous_high - previous_low
+            is_doji = (
+                previous_body < previous_range * 0.1
+            )
+
+            is_exhaustion = (
+                previous_body < avg_candle_size * 0.5
+            )
 # TP Zone Clé
             buy_tp = resistance
             sell_tp = support
