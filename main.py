@@ -287,7 +287,10 @@ def home():
                 and current_price >= current_ema50 * 0.995
                 and 40 < current_rsi < 60
                 and current_adx > 25
-                and bullish_breakout
+                and (
+    bullish_breakout
+    or confirmed_buy_setup
+)
             ):
 
                 signal = "🚀 BUY TENDANCE"
@@ -298,7 +301,10 @@ def home():
                 and current_price <= current_ema50 * 1.005
                 and 40 < current_rsi < 60
                 and current_adx > 25
-                and bearish_breakout
+                and (
+    bearish_breakout
+    or confirmed_sell_setup
+                )
             ):
 
                 signal = "🔥 SELL TENDANCE"
