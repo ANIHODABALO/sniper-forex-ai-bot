@@ -58,6 +58,9 @@ def home():
 
             data = market.history(period="2d", interval="5m")
 
+            if data.empty:
+    continue
+
             close_prices = data["Close"]
             high_prices = data["High"]
             low_prices = data["Low"]
