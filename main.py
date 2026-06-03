@@ -161,6 +161,23 @@ def home():
                 abs(current_price - resistance)
                 <= current_atr
             )
+            valid_bullish_rejection = (
+                bullish_rejection
+                and (
+                    near_support
+                    or near_ema50
+                    or near_ema200
+                )
+            )
+
+            valid_bearish_rejection = (
+                bearish_rejection
+                and (
+                    near_resistance
+                    or near_ema50
+                    or near_ema200
+                )
+            )
 # TP Zone Clé
             buy_tp = resistance
             sell_tp = support
