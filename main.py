@@ -178,6 +178,15 @@ def home():
                     or near_ema200
                 )
             )
+            confirmed_buy_setup = (
+                valid_bullish_rejection
+                and market_behavior == "🚀 IMPULSION HAUSSIÈRE"
+            )
+
+            confirmed_sell_setup = (
+                valid_bearish_rejection
+                and market_behavior == "🔥 IMPULSION BAISSIÈRE"
+            )
 # TP Zone Clé
             buy_tp = resistance
             sell_tp = support
