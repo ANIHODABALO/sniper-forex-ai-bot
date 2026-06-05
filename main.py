@@ -280,7 +280,7 @@ def home():
 
             # Signal
             signal = "⚪ NEUTRE"
-
+            print(asset_name, signal)
             # BUY tendance
             if (
                 current_ema20 > current_ema50 > current_ema200
