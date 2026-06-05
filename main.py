@@ -368,9 +368,9 @@ def home():
                 
 except Exception as e:
 
-    print("ERREUR", asset_name, e)
+            print("ERREUR", asset_name, e)
 
-    continue
+            continue
 
 
     if final_message != "":
