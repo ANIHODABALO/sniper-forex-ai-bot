@@ -51,6 +51,7 @@ def home():
     final_message = ""
 
     for asset_name, symbol in assets.items():
+        print("SCAN:", asset_name)
 
         try:
 
