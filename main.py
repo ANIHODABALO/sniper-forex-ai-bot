@@ -366,9 +366,9 @@ def home():
 ------------------------
 """
                 
- except:
+        except:
 
-      continue 
+          continue 
 
     if final_message != "":
 
