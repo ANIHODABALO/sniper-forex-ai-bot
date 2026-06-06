@@ -365,10 +365,11 @@ def home():
 
 ------------------------
 """
-                
-except:
+
+    except:
 
     continue
+
 
 
     if final_message != "":
