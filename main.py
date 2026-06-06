@@ -366,7 +366,7 @@ def home():
 ------------------------
 """
                 
-    except:
+ except:
 
       continue 
 
