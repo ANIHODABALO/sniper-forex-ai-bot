@@ -281,7 +281,6 @@ def home():
 
             # Signal
             signal = "⚪ NEUTRE"
-            print(asset_name, signal)
             # BUY tendance
             if (
                 current_ema20 > current_ema50 > current_ema200
@@ -327,6 +326,8 @@ def home():
             ):
 
                 signal = "🔥 SELL EXTRÊME"
+               
+            print(asset_name, signal)
 
             # Anti-spam
             previous_signal = last_signals.get(asset_name)
