@@ -366,11 +366,9 @@ def home():
 ------------------------
 """
                 
-except Exception as e:
+except:
 
-            print("ERREUR", asset_name, e)
-
-            continue
+    continue
 
 
     if final_message != "":
