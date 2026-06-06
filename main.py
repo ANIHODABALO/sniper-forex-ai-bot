@@ -370,8 +370,6 @@ def home():
 
     continue
 
-
-
     if final_message != "":
 
         send_telegram_message(
